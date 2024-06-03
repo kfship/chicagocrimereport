@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chicago Crime Map</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+    <style>
+
+    </style>
+</head>
+<body>
+    <div class="spinner-container">
+        <div class="spinner"></div>
+        <p>Loading data...</p>
+    </div>
+    <div id="title">Chicago Crime Report</div>
+    <div class="container-fluid">
+        <div id="map" style="display:none;"></div>
+        <div class="charts-container">
+            <div id="barchart" class="chart" style="margin-top: 20px;"></div>
+            <div class="charts-row">
+                <div id="piechart1" class="chart" style="margin-top: 10px;margin-left:90px;"></div>
+                <div id="piechart2" class="chart" style="margin-top: 10px;"></div>
+            </div>
+        </div>
+    </div>
+    <script src="map.js"></script>
+    <script src="bar.js"></script>
+    <script src="pie.js"></script>
+
+    <script>
+        d3.csv("https://raw.githubusercontent.com/kfship/chicagocrimereport/main/input.csv").then(function(crimeData) {
+            crimeData.forEach(d => {
+                d.latitude = +d.latitude;
+                d.longitude = +d.longitude;
+                d.date = new Date(d["DATE OF OCCURRENCE"]);
+            });
+
+            barChart = new BarChart();
+            barChart.initialize("#barchart");
+
+            pieChart1 = new PieChart();
+            pieChart2 = new PieChart();
+
+            pieChart1.initialize("#piechart1");
+            pieChart2.initialize("#piechart2");
+
+            heatMap = new HeatMap(crimeData, barChart, pieChart1, pieChart2);
+            heatMap.initialize();
+        });
+    </script>
+</body>
+</html>
